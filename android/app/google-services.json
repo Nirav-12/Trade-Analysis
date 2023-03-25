@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "978586545408",
+    "project_id": "tradeanalysis-92837",
+    "storage_bucket": "tradeanalysis-92837.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:978586545408:android:caf78b46471ce157af97e5",
+        "android_client_info": {
+          "package_name": "com.tradeanalysis"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "978586545408-a1evrfpd1vekobe0qb3dv5250a3jo7sj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tradeanalysis",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "978586545408-4dbt03hesjcsldj0sm0h4c90dnqhuo1k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmGo1ig77x2h3s-SoyUu5NrBUVUR0nBVw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "978586545408-4dbt03hesjcsldj0sm0h4c90dnqhuo1k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
