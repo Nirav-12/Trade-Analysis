@@ -1,18 +1,21 @@
-import React from 'react';
-import {TextInput, View, StyleSheet} from 'react-native';
+import React, {Component} from 'react';
+import {TextInput, View, StyleSheet, Text} from 'react-native';
 
-const Input = props => {
-  return (
-    <View style={{boxShadow: '30px'}}>
-      <TextInput
-        placeholder={props.placeholder}
-        style={[styles.textInput]}
-        {...props}
-        // placeholderTextColor={'gray'}
-      />
-    </View>
-  );
-};
+export default class Input extends Component {
+  render() {
+    return (
+      <View style={{boxShadow: '30px'}}>
+        <TextInput
+          placeholder={this.props.placeholder}
+          style={[styles.textInput]}
+          {...this.props}
+          // placeholderTextColor={'gray'}
+        />
+      </View>
+    );
+  }
+}
+
 const styles = StyleSheet.create({
   textInput: {
     padding: 10,
@@ -30,4 +33,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Input;
+// export default Input;

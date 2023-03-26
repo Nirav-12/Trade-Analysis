@@ -1,13 +1,5 @@
-import {
-  View,
-  Button,
-  Text,
-  StyleSheet,
-  StatusBar,
-  Alert,
-  TextInput,
-} from 'react-native';
-import React, {useState} from 'react';
+import React, {Component} from 'react';
+import {View, Text, StyleSheet, StatusBar, BackHandler} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Input from '../components/Input';
@@ -15,91 +7,122 @@ import NaviButton from '../components/NaviButton';
 import OtpInput from '../components/OtpInput';
 import ToastManager from '../components/ToastManager';
 
-const HomeScreen = ({navigation}) => {
-  const [phoneNo, setPhoneNo] = useState('');
-  const [otp, setOTP] = useState([]);
-  const [res, setRes] = useState(null);
-  const [optScreen, setOtpScreen] = useState(false);
+export default class HomeScreen extends Component {
+  constructor() {
+    super();
+    this.state = {
+      phoneNo: '',
+      otp: [],
+      res: null,
+      optScreen: false,
+    };
+  }
 
-  const sendVerification = async () => {
-    const confirmation = await auth().signInWithPhoneNumber(`+91${phoneNo}`);
+  componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', () =>
+      BackHandler.exitApp(),
+    );
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', () =>
+      BackHandler.exitApp(),
+    );
+  }
+  sendVerification = async () => {
+    const confirmation = await auth().signInWithPhoneNumber(
+      `+91${this.state.phoneNo}`,
+    );
     ToastManager.show({
-      text: `OTP snet to ${phoneNo}`,
+      text: `OTP snet to ${this.state.phoneNo}`,
       showTimeBar: true,
       position: 'bottom',
     });
-    setOtpScreen(true);
-    setRes(confirmation);
+    this.setState({optScreen: true, res: confirmation});
   };
 
-  const confirmCode = async () => {
-    let otpVal = otp.join('');
+  confirmCode = async () => {
+    let otpVal = this.state.otp.join('');
     try {
-      await res.confirm(otpVal).then(val => {
-        onVerification(val.user.uid);
+      await this.state.res.confirm(otpVal).then(val => {
+        this.onVerification(val.user.uid);
       });
     } catch (error) {
       console.log(error, 'Invalid code.');
     }
   };
 
-  const onVerification = userId => {
+  onVerification = userId => {
     firestore()
       .collection('user')
-      .where('phone', '==', phoneNo)
+      .where('phone', '==', this.state.phoneNo)
       .get()
       .then(querySnapshot => {
-        setPhoneNo(null);
-        setOTP(null);
-        setOtpScreen(false);
+        this.setState({phoneNo: null, otp: [], optScreen: false});
         if (querySnapshot.size) {
-          navigation.navigate('FileUpload');
+          this.props.navigation.navigate('FileUpload');
         } else {
-          navigation.navigate('SignUp', {phoneNo: phoneNo, uid: userId});
+          this.props.navigation.navigate('SignUp', {
+            phoneNo: this.state.phoneNo,
+            uid: userId,
+          });
         }
       });
   };
 
-  return (
-    <View style={styles.container}>
-      <StatusBar hidden={true} />
-      <Text style={styles.text1}>Hello Again!</Text>
-      <Text style={styles.text2}>Welcome To TradeAnalysis</Text>
+  render() {
+    return (
+      <View style={styles.container}>
+        <StatusBar hidden={true} />
+        <Text style={styles.text1}>Hello Again!</Text>
+        <Text style={styles.text2}>Welcome To TradeAnalysis</Text>
 
-      <View style={{marginTop: 80}}>
-        {!optScreen ? (
-          <View>
-            <Input
-              placeholder="Phone Number"
-              onChangeText={val => setPhoneNo(val)}
-              onSubmitEditing={() => sendVerification()}
-            />
-            <NaviButton title="Send OTP" onPress={() => sendVerification()} />
-          </View>
-        ) : (
-          <View>
-            <Text style={{color: '#1fbca9', alignSelf: 'center'}}>
-              OTP is sent to {phoneNo}
-              {'  '}
-              <Text
-                style={{textDecorationLine: 'underline'}}
-                onPress={() => {
-                  setPhoneNo('');
-                  setOtpScreen(false);
-                  setRes(null);
-                }}>
-                click to edit
+        <View style={{marginTop: 80}}>
+          {!this.state.optScreen ? (
+            <View>
+              <Input
+                placeholder="Phone Number"
+                onChangeText={val => this.setState({phoneNo: val})}
+                onSubmitEditing={() => this.sendVerification()}
+              />
+              <NaviButton
+                title="Send OTP"
+                onPress={() => this.sendVerification()}
+              />
+            </View>
+          ) : (
+            <View>
+              <Text style={{color: '#1fbca9', alignSelf: 'center'}}>
+                OTP is sent to {this.state.phoneNo}
+                {'  '}
+                <Text
+                  style={{textDecorationLine: 'underline'}}
+                  onPress={() => {
+                    this.setState({
+                      phoneNo: '',
+                      res: null,
+                      optScreen: false,
+                    });
+                  }}>
+                  click to edit
+                </Text>
               </Text>
-            </Text>
-            <OtpInput otpVal={val => setOTP(val)} otpArr={otp} />
+              <OtpInput
+                otpVal={val => this.setState({otp: val})}
+                otpArr={this.state.otp}
+              />
 
-            <NaviButton title="Verify OTP" onPress={() => confirmCode()} />
-          </View>
-        )}
+              <NaviButton
+                title="Verify OTP"
+                onPress={() => this.confirmCode()}
+              />
+            </View>
+          )}
+        </View>
       </View>
-    </View>
-  );
-};
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -120,5 +143,3 @@ const styles = StyleSheet.create({
     color: '#1fbca9',
   },
 });
-
-export default HomeScreen;

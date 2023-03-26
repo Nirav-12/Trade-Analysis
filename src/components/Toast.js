@@ -6,140 +6,140 @@ import {
   Animated,
   Easing,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {Component} from 'react';
 import Success from '../asset/success.png';
 import Warn from '../asset/warn.png';
 import Error from '../asset/error.png';
 import Info from '../asset/info.png';
 
-const Toast = ({val, setID}) => {
-  const [isVisible, setVisible] = useState(true);
-  const [width, setwidth] = useState(new Animated.Value(0));
-  const [opacity, setOpacity] = useState(new Animated.Value(0));
+export default class Toast extends Component {
+  color = 'green';
+  image = Success;
 
-  useEffect(() => {
-    if (isVisible == false && val?.onClose) {
-      val?.onClose();
-    }
-  }, [isVisible]);
+  constructor(props) {
+    super(props);
+    this.state = {
+      isVisible: true,
+      width: new Animated.Value(0),
+      opacity: new Animated.Value(0),
+      duration: this.props.val.duration || 3000,
+    };
+  }
+  close = val => {
+    this.setState({isVisible: false});
+  };
 
-  useEffect(() => {
+  componentDidMount() {
     const id = setTimeout(() => {
-      setVisible(false);
-    }, duration);
+      this.setState({isVisible: false});
+    }, this.state.duration);
+    this.props.setID(id);
 
-    setID(id);
-
-    Animated.timing(width, {
+    Animated.timing(this.state.width, {
       toValue: 1,
-      duration: duration,
+      duration: this.state.duration,
       easing: Easing.linear,
       useNativeDriver: false,
     }).start();
-
-    Animated.timing(opacity, {
+    Animated.timing(this.state.opacity, {
       toValue: 1,
       duration: 1000,
       easing: Easing.linear,
       useNativeDriver: false,
     }).start();
-  }, []);
-
-  let widthVal = width.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, 250],
-  });
-
-  let duration = val?.duration || 3000;
-
-  const close = val => {
-    setVisible(false);
-    clearInterval(val);
-  };
-
-  let color = 'green';
-  let image = Success;
-
-  if (val?.type == 'Warn') {
-    color = '#f4a838';
-    image = Warn;
-  }
-  if (val?.type == 'Error') {
-    color = 'red';
-    image = Error;
-  }
-  if (val?.type == 'Info') {
-    color = 'skyblue';
-    image = Info;
   }
 
-  if (isVisible) {
-    return (
-      <Animated.View
-        style={{
-          opacity: opacity,
-          marginTop: 10,
-          width: 250,
-          backgroundColor: color,
-          marginTop: 10,
-        }}>
-        <View
+  componentDidUpdate() {
+    if (this.state.isVisible == false) {
+      if (this.state.isVisible == false && this.props.val?.onClose) {
+        this.props.val?.onClose();
+      }
+    }
+  }
+
+  render() {
+    if (this.props.val?.type == 'Warn') {
+      color = '#f4a838';
+      image = Warn;
+    }
+    if (this.props.val?.type == 'Error') {
+      color = 'red';
+      image = Error;
+    }
+    if (this.props.val?.type == 'Info') {
+      color = 'skyblue';
+      image = Info;
+    }
+    widthVal = this.state.width.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, 250],
+    });
+    if (this.state.isVisible) {
+      return (
+        <Animated.View
           style={{
-            flexDirection: 'row',
-            paddingVertical: 10,
-            paddingHorizontal: 20,
+            opacity: this.state.opacity,
+            marginTop: 10,
+            width: 250,
+            backgroundColor: this.color,
+            marginTop: 10,
           }}>
           <View
             style={{
-              paddingRight: 15,
-              justifyContent: 'center',
+              flexDirection: 'row',
+              paddingVertical: 10,
+              paddingHorizontal: 20,
             }}>
-            {val?.imageChild ?? (
-              <Image style={{width: 22, height: 22}} source={image} />
+            <View
+              style={{
+                paddingRight: 15,
+                justifyContent: 'center',
+              }}>
+              {this.props.val?.imageChild ?? (
+                <Image style={{width: 22, height: 22}} source={this.image} />
+              )}
+            </View>
+            <View style={{flex: 1}}>
+              <Text
+                style={{
+                  fontWeight: this.props.val?.textStyle?.fontWeight || 900,
+                  fontSize: this.props.val?.textStyle?.fontSize,
+                  color: this.props.val?.textStyle?.color,
+                }}>
+                {this.props.val?.header ?? this.props.val?.type ?? 'Success'} !
+              </Text>
+              <Text
+                style={{
+                  fontWeight: this.props.val?.subTextStyle?.fontWeight,
+                  fontSize: this.props.val?.subTextStyle?.fontSize,
+                  color: this.props.val?.subTextStyle?.color,
+                }}>
+                {this.props.val?.text}
+              </Text>
+            </View>
+            {this.props.val?.showCloseButton && (
+              <View style={{justifyContent: 'center'}}>
+                <TouchableOpacity onPress={() => this.close()}>
+                  <Text style={{fontSize: 18, fontWeight: 700}}>x</Text>
+                </TouchableOpacity>
+              </View>
             )}
           </View>
-          <View style={{flex: 1}}>
-            <Text
-              style={{
-                fontWeight: val?.textStyle?.fontWeight || 900,
-                fontSize: val?.textStyle?.fontSize,
-                color: val?.textStyle?.color,
-              }}>
-              {val?.header ?? val?.type ?? 'Success'} !
-            </Text>
-            <Text
-              style={{
-                fontWeight: val?.subTextStyle?.fontWeight,
-                fontSize: val?.subTextStyle?.fontSize,
-                color: val?.subTextStyle?.color,
-              }}>
-              {val?.text}
-            </Text>
+          <View>
+            {this.props.val?.showTimeBar && (
+              <Animated.View
+                style={{
+                  height: 4,
+                  backgroundColor: 'black',
+                  width: widthVal,
+                }}></Animated.View>
+            )}
           </View>
-          {val?.showCloseButton && (
-            <View style={{justifyContent: 'center'}}>
-              <TouchableOpacity onPress={() => close()}>
-                <Text style={{fontSize: 18, fontWeight: 700}}>x</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
-        <View>
-          {val?.showTimeBar && (
-            <Animated.View
-              style={{
-                height: 4,
-                backgroundColor: 'black',
-                width: widthVal,
-              }}></Animated.View>
-          )}
-        </View>
-      </Animated.View>
-    );
+        </Animated.View>
+      );
+    }
   }
-};
-
-export default Toast;
+}
 
 // ToastManager Methods
 

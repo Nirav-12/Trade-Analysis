@@ -1,94 +1,115 @@
 import {View, Text, StyleSheet, TextInput, Button} from 'react-native';
-import React, {useState} from 'react';
+import React, {Component} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import Input from '../components/Input';
 import NaviButton from '../components/NaviButton';
+export default class SignUp extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      firstName: null,
+      lastName: null,
+      email: null,
+      PAN: null,
+    };
+  }
 
-const SignUp = ({route, navigation}) => {
-  const [firstName, setFirstName] = useState(null);
-  const [lastName, setLastName] = useState(null);
-  const [email, setEmail] = useState(null);
-  const [PAN, setPAN] = useState(null);
-
-  const signup = async () => {
+  signup = async () => {
     await firestore()
       .collection('user')
-      .doc(route.params.uid)
+      .doc(this.props.route.params.uid)
       .set({
-        id: route.params.uid,
-        firstName: firstName,
-        lastName: lastName,
-        phone: route.params.phoneNo,
-        email: email,
-        PAN: PAN,
+        id: this.props.route.params.uid,
+        firstName: this.state.firstName,
+        lastName: this.state.lastName,
+        phone: this.props.route.params.phoneNo,
+        email: this.state.email,
+        PAN: this.state.PAN,
       })
       .then(() => {
-        navigation.navigate('FileUpload');
+        this.props.navigation.navigate('FileUpload');
       });
   };
 
-  const emailValidate = val => {
+  emailValidate(val) {
     let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
     if (reg.test(val) == false) {
-      setEmail(null);
+      this.setState({
+        email: null,
+      });
     } else {
-      setEmail(val);
+      this.setState({
+        email: val,
+      });
     }
-  };
+  }
 
-  const panValidation = val => {
+  panValidation = val => {
     let reg = /[A-Z]{5}[0-9]{4}[A-Z]{1}$/;
     if (reg.test(val) == false) {
-      setPAN(null);
+      this.setState({
+        PAN: null,
+      });
     } else {
-      setPAN(val);
+      this.setState({
+        PAN: val,
+      });
     }
   };
-  return (
-    <View style={styles.container}>
-      <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+          <Input
+            width={130}
+            margin={5}
+            placeholder="First Name"
+            onChangeText={val => this.setState({firstName: val})}
+          />
+          <Input
+            width={130}
+            margin={5}
+            placeholder="Last Name"
+            onChangeText={val => this.setState({lastName: val})}
+          />
+        </View>
+
         <Input
-          width={130}
-          margin={5}
-          placeholder="First Name"
-          onChangeText={val => setFirstName(val)}
+          placeholder={this.props.route.params?.phoneNo}
+          editable={false}
         />
         <Input
-          width={130}
-          margin={5}
-          placeholder="Last Name"
-          onChangeText={val => setLastName(val)}
+          placeholder="Email ID"
+          onChangeText={val => {
+            this.emailValidate(val);
+          }}
+        />
+        <Input
+          placeholder="PAN"
+          onChangeText={val => this.panValidation(val)}
+        />
+
+        <NaviButton
+          title="SignUp"
+          onPress={() => {
+            if (!this.state.firstName) {
+              alert('please enter correct firstName');
+            } else if (!this.state.lastName) {
+              alert('please enter correct lastName');
+            } else if (!this.state.email) {
+              alert('please enter correct email');
+            } else if (!this.state.PAN) {
+              alert('please enter correct PAN');
+            } else {
+              this.signup();
+            }
+          }}
         />
       </View>
-
-      <Input placeholder={route.params.phoneNo} editable={false} />
-      <Input
-        placeholder="Email ID"
-        onChangeText={val => {
-          emailValidate(val);
-        }}
-      />
-      <Input placeholder="PAN" onChangeText={val => panValidation(val)} />
-
-      <NaviButton
-        title="SignUp"
-        onPress={() => {
-          if (!firstName) {
-            alert('please enter correct firstName');
-          } else if (!lastName) {
-            alert('please enter correct lastName');
-          } else if (!email) {
-            alert('please enter correct email');
-          } else if (!PAN) {
-            alert('please enter correct PAN');
-          } else {
-            signup();
-          }
-        }}
-      />
-    </View>
-  );
-};
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -106,5 +127,3 @@ const styles = StyleSheet.create({
     width: 140,
   },
 });
-
-export default SignUp;

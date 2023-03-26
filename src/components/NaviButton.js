@@ -1,13 +1,15 @@
-import React from 'react';
 import {Text, View, StyleSheet, TouchableOpacity} from 'react-native';
+import React, {Component} from 'react';
 
-const NaviButton = props => {
-  return (
-    <TouchableOpacity style={styles.button} {...props}>
-      <Text style={styles.btnText}>{props.title} </Text>
-    </TouchableOpacity>
-  );
-};
+export default class NaviButton extends Component {
+  render() {
+    return (
+      <TouchableOpacity style={styles.button} {...this.props}>
+        <Text style={styles.btnText}>{this.props.title} </Text>
+      </TouchableOpacity>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   button: {
@@ -25,5 +27,3 @@ const styles = StyleSheet.create({
   },
   btnText: {color: '#ffffff'},
 });
-
-export default NaviButton;

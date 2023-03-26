@@ -1,43 +1,28 @@
-import {View, Text, TouchableOpacity, Image} from 'react-native';
-import React from 'react';
+import {Button, Text, View} from 'react-native';
+import React, {Component} from 'react';
 
-const Practice = () => {
-  return (
-    <View
-      style={{
-        width: 250,
-        backgroundColor: 'skyblue',
-        margin: 20,
-      }}>
-      <View
-        style={{
-          flexDirection: 'row',
-          paddingVertical: 10,
-          paddingHorizontal: 20,
-        }}>
-        <View
-          style={{
-            paddingRight: 15,
-            justifyContent: 'center',
-          }}>
-          <Image
-            style={{width: 22, height: 22}}
-            source={require('../asset/info.png')}
-          />
-        </View>
-        <View style={{flex: 1}}>
-          <Text style={{fontWeight: 900}}>Info</Text>
-          <Text style={{}}>good morning</Text>
-        </View>
-        <View style={{justifyContent: 'center'}}>
-          <TouchableOpacity onPress={() => console.log('close modal')}>
-            <Text style={{fontSize: 18, fontWeight: 700}}>x</Text>
-          </TouchableOpacity>
-        </View>
+export default class Practice extends Component {
+  constructor() {
+    super();
+    this.state = {
+      count: 0,
+    };
+  }
+  componentDidUpdate() {
+    console.log(this.props);
+  }
+
+  render() {
+    let {val} = this.props;
+    console.log('props', val);
+    return (
+      <View>
+        <Text>{this.state.count}</Text>
+        <Button
+          title="add"
+          onPress={() => this.setState({count: this.state.count + 1})}
+        />
       </View>
-      <View style={{height: 4, backgroundColor: 'black'}}></View>
-    </View>
-  );
-};
-
-export default Practice;
+    );
+  }
+}
