@@ -11,10 +11,11 @@ import Success from '../asset/success.png';
 import Warn from '../asset/warn.png';
 import Error from '../asset/error.png';
 import Info from '../asset/info.png';
+import {images} from '../constant/image';
 
 export default class Toast extends Component {
   color = 'green';
-  image = Success;
+  image = images.SUCCESS;
 
   constructor(props) {
     super(props);
@@ -60,15 +61,15 @@ export default class Toast extends Component {
   render() {
     if (this.props.val?.type == 'Warn') {
       color = '#f4a838';
-      image = Warn;
+      image = images.WARN;
     }
     if (this.props.val?.type == 'Error') {
       color = 'red';
-      image = Error;
+      image = images.ERROR;
     }
     if (this.props.val?.type == 'Info') {
       color = 'skyblue';
-      image = Info;
+      image = images.INFO;
     }
     widthVal = this.state.width.interpolate({
       inputRange: [0, 1],

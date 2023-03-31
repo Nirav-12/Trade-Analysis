@@ -8,9 +8,7 @@ export default class Practice extends Component {
       count: 0,
     };
   }
-  componentDidUpdate() {
-    console.log(this.props);
-  }
+  componentDidUpdate() {}
 
   render() {
     let {val} = this.props;

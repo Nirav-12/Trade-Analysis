@@ -7,7 +7,7 @@ import NaviButton from '../components/NaviButton';
 import OtpInput from '../components/OtpInput';
 import ToastManager from '../components/ToastManager';
 
-export default class HomeScreen extends Component {
+export default class LoginScreen extends Component {
   constructor() {
     super();
     this.state = {
@@ -52,15 +52,14 @@ export default class HomeScreen extends Component {
     }
   };
 
-  onVerification = userId => {
-    firestore()
-      .collection('user')
+  onVerification = async userId => {
+    await firestore()
+      .collection('users')
       .where('phone', '==', this.state.phoneNo)
       .get()
       .then(querySnapshot => {
-        this.setState({phoneNo: null, otp: [], optScreen: false});
         if (querySnapshot.size) {
-          this.props.navigation.navigate('FileUpload');
+          this.props.navigation.navigate('Home');
         } else {
           this.props.navigation.navigate('SignUp', {
             phoneNo: this.state.phoneNo,
@@ -68,6 +67,8 @@ export default class HomeScreen extends Component {
           });
         }
       });
+
+    this.setState({phoneNo: null, otp: [], optScreen: false});
   };
 
   render() {

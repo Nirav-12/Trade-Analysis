@@ -11,10 +11,10 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		6214202E6AEA641DEDB27879 /* Pods_TradeAnalysis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C9B3CFD6401F35F5715D2D5 /* Pods_TradeAnalysis.framework */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		882CDF1729C81B360065CED4 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 882CDF1629C81B360065CED4 /* GoogleService-Info.plist */; };
-		BA98FCAC0D640E5CADA24A87 /* libPods-TradeAnalysis-TradeAnalysisTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 68BF8C599F1BACAA95B2665C /* libPods-TradeAnalysis-TradeAnalysisTests.a */; };
-		CBAC7C22118C0C5BBB775081 /* libPods-TradeAnalysis.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FDEF3B4B71AF36809F3B2F9 /* libPods-TradeAnalysis.a */; };
+		E0A1C257D13C591F7536306B /* Pods_TradeAnalysis_TradeAnalysisTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 58350C654A233AE3DA7E9C75 /* Pods_TradeAnalysis_TradeAnalysisTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,11 +37,11 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = TradeAnalysis/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = TradeAnalysis/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = TradeAnalysis/main.m; sourceTree = "<group>"; };
+		2C9B3CFD6401F35F5715D2D5 /* Pods_TradeAnalysis.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TradeAnalysis.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B4392A12AC88292D35C810B /* Pods-TradeAnalysis.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TradeAnalysis.debug.xcconfig"; path = "Target Support Files/Pods-TradeAnalysis/Pods-TradeAnalysis.debug.xcconfig"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-TradeAnalysis.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TradeAnalysis.release.xcconfig"; path = "Target Support Files/Pods-TradeAnalysis/Pods-TradeAnalysis.release.xcconfig"; sourceTree = "<group>"; };
+		58350C654A233AE3DA7E9C75 /* Pods_TradeAnalysis_TradeAnalysisTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TradeAnalysis_TradeAnalysisTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5B7EB9410499542E8C5724F5 /* Pods-TradeAnalysis-TradeAnalysisTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TradeAnalysis-TradeAnalysisTests.debug.xcconfig"; path = "Target Support Files/Pods-TradeAnalysis-TradeAnalysisTests/Pods-TradeAnalysis-TradeAnalysisTests.debug.xcconfig"; sourceTree = "<group>"; };
-		68BF8C599F1BACAA95B2665C /* libPods-TradeAnalysis-TradeAnalysisTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TradeAnalysis-TradeAnalysisTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7FDEF3B4B71AF36809F3B2F9 /* libPods-TradeAnalysis.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TradeAnalysis.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = TradeAnalysis/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		882CDF1629C81B360065CED4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-TradeAnalysis-TradeAnalysisTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TradeAnalysis-TradeAnalysisTests.release.xcconfig"; path = "Target Support Files/Pods-TradeAnalysis-TradeAnalysisTests/Pods-TradeAnalysis-TradeAnalysisTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -53,7 +53,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BA98FCAC0D640E5CADA24A87 /* libPods-TradeAnalysis-TradeAnalysisTests.a in Frameworks */,
+				E0A1C257D13C591F7536306B /* Pods_TradeAnalysis_TradeAnalysisTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,7 +61,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CBAC7C22118C0C5BBB775081 /* libPods-TradeAnalysis.a in Frameworks */,
+				6214202E6AEA641DEDB27879 /* Pods_TradeAnalysis.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -102,8 +102,8 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				7FDEF3B4B71AF36809F3B2F9 /* libPods-TradeAnalysis.a */,
-				68BF8C599F1BACAA95B2665C /* libPods-TradeAnalysis-TradeAnalysisTests.a */,
+				2C9B3CFD6401F35F5715D2D5 /* Pods_TradeAnalysis.framework */,
+				58350C654A233AE3DA7E9C75 /* Pods_TradeAnalysis_TradeAnalysisTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -163,7 +163,6 @@
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
 				C59DA0FBD6956966B86A3779 /* [CP] Embed Pods Frameworks */,
-				F6A41C54EA430FDDC6A6ED99 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -186,7 +185,6 @@
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */,
-				E235C05ADACE081382539298 /* [CP] Copy Pods Resources */,
 				8C3C9236475207E2710051F8 /* [CP-User] [RNFB] Core Configuration */,
 			);
 			buildRules = (
@@ -360,40 +358,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TradeAnalysis-TradeAnalysisTests/Pods-TradeAnalysis-TradeAnalysisTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		E235C05ADACE081382539298 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TradeAnalysis/Pods-TradeAnalysis-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TradeAnalysis/Pods-TradeAnalysis-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TradeAnalysis/Pods-TradeAnalysis-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		F6A41C54EA430FDDC6A6ED99 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TradeAnalysis-TradeAnalysisTests/Pods-TradeAnalysis-TradeAnalysisTests-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-TradeAnalysis-TradeAnalysisTests/Pods-TradeAnalysis-TradeAnalysisTests-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TradeAnalysis-TradeAnalysisTests/Pods-TradeAnalysis-TradeAnalysisTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -582,7 +546,7 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -654,7 +618,7 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;

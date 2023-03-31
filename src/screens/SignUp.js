@@ -3,6 +3,7 @@ import React, {Component} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import Input from '../components/Input';
 import NaviButton from '../components/NaviButton';
+import {screen} from '../constant/screens';
 export default class SignUp extends Component {
   constructor(props) {
     super(props);
@@ -16,7 +17,7 @@ export default class SignUp extends Component {
 
   signup = async () => {
     await firestore()
-      .collection('user')
+      .collection('users')
       .doc(this.props.route.params.uid)
       .set({
         id: this.props.route.params.uid,
@@ -27,7 +28,7 @@ export default class SignUp extends Component {
         PAN: this.state.PAN,
       })
       .then(() => {
-        this.props.navigation.navigate('FileUpload');
+        this.props.navigation.navigate(screen.HOME);
       });
   };
 

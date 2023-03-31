@@ -82,7 +82,7 @@ export default class ToastManager extends Component {
               this.setState({
                 count: arr,
               });
-              console.log(arr);
+              // console.log(arr);
             };
             return <Toast key={index} val={val} setID={val => newArray(val)} />;
           })}

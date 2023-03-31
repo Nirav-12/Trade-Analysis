@@ -11,16 +11,23 @@ import {
   BackHandler,
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
+import {fieldName} from '../constant/fieldNames';
+import {images} from '../constant/image';
+import firestore from '@react-native-firebase/firestore';
+import {screen} from '../constant/screens';
 
 export default class FileUpload extends Component {
+  user = auth().currentUser;
+
   constructor(props) {
-    console.log(props);
     super(props);
     this.state = {
       file: null,
       data: null,
       startPoint: null,
       keyWord: [],
+      finalObject: {},
+      excle: null,
     };
   }
 
@@ -38,7 +45,7 @@ export default class FileUpload extends Component {
 
   getData = async () => {
     try {
-      let response = await DocumentPicker.pick({
+      let [response] = await DocumentPicker.pick({
         type: [types.xlsx, types.xls],
       });
       this.setState({file: response});
@@ -104,9 +111,9 @@ export default class FileUpload extends Component {
     }
   };
 
-  finalObj = async () => {
+  setfFinalObj = async () => {
     let final = {
-      fileName: this.state.file[0].name,
+      fileName: this.state.file.name,
       tradeDetails: this.tradeDetailsObj(),
       description: this.state.startPoint.description,
       fromDate: this.state.startPoint.description.split(' ')[5],
@@ -115,41 +122,69 @@ export default class FileUpload extends Component {
       summary: this.Summary(),
       keyWord: this.state.keyWord.sort(),
     };
-    this.props.navigation.navigate('Detail', (params = final));
-    console.log('final object', final);
+    this.setState({finalObject: final});
+
+    let exist = null;
+    compare = firestore().collection('trades');
+    await compare
+      .where('finalObject.description', '==', final.description)
+      .get()
+      .then(val => {
+        val._docs.map(obj => {
+          if (obj._data.uid == this.user.uid) {
+            this.exist = true;
+          }
+        });
+      });
+
+    if (!this.exist) {
+      console.log('data not exist');
+      ref = firestore().collection('trades').doc();
+      ref.set({
+        file: this.state.excle,
+        id: ref._documentPath._parts[1],
+        uid: this.user.uid,
+        finalObject: final,
+      });
+    } else {
+      console.log('data exist ');
+    }
   };
 
   keyWordCompile = () => {
-    let mainObj = this.tradeDetailsObj();
+    let mainObj = this.state.finalObject.tradeDetails;
     let obj = {};
 
     for (let i = 0; i < mainObj.length; i++) {
       if (!obj[mainObj[i].Symbol]) {
         let valForSymbol = {
-          'Buy Value': mainObj[i]['Buy Value'],
-          Quantity: mainObj[i]['Quantity'],
-          'Sell Value': mainObj[i]['Sell Value'],
-          'Realized P&L': mainObj[i]['Realized P&L'],
+          'Buy Value': mainObj[i][fieldName.BUY_VALUE],
+          Quantity: mainObj[i][fieldName.QUANTITY],
+          'Sell Value': mainObj[i][fieldName.SELL_VALUE],
+          'Realized P&L': mainObj[i][fieldName.REALIZED_P_L],
         };
         obj[mainObj[i].Symbol] = valForSymbol;
       } else {
-        obj[mainObj[i].Symbol]['Buy Value'] =
-          obj[mainObj[i].Symbol]['Buy Value'] + mainObj[i]['Buy Value'];
-        obj[mainObj[i].Symbol]['Quantity'] =
-          obj[mainObj[i].Symbol]['Quantity'] + mainObj[i]['Quantity'];
-        obj[mainObj[i].Symbol]['Sell Value'] =
-          obj[mainObj[i].Symbol]['Sell Value'] + mainObj[i]['Sell Value'];
-        obj[mainObj[i].Symbol]['Realized P&L'] =
-          obj[mainObj[i].Symbol]['Realized P&L'] + mainObj[i]['Realized P&L'];
+        obj[mainObj[i].Symbol][fieldName.BUY_VALUE] =
+          obj[mainObj[i].Symbol][fieldName.BUY_VALUE] +
+          mainObj[i][fieldName.BUY_VALUE];
+        obj[mainObj[i].Symbol][fieldName.QUANTITY] =
+          obj[mainObj[i].Symbol][fieldName.QUANTITY] +
+          mainObj[i][fieldName.QUANTITY];
+        obj[mainObj[i].Symbol][fieldName.SELL_VALUE] =
+          obj[mainObj[i].Symbol][fieldName.SELL_VALUE] +
+          mainObj[i][fieldName.SELL_VALUE];
+        obj[mainObj[i].Symbol][fieldName.REALIZED_P_L] =
+          obj[mainObj[i].Symbol][fieldName.REALIZED_P_L] +
+          mainObj[i][fieldName.REALIZED_P_L];
       }
     }
 
     console.log('keyWordCompile', obj);
-    this.props.navigation.navigate('KeywordDetail', (params = obj));
+    this.props.navigation.navigate(screen.KEYWORD_DETAIL, (params = obj));
   };
 
   componentDidMount() {
-    console.log('componentDidMount');
     this.props.navigation.setOptions({
       headerRight: () => (
         <View>
@@ -157,10 +192,7 @@ export default class FileUpload extends Component {
             onPress={() => {
               this.logout();
             }}>
-            <Image
-              style={{width: 25, height: 25}}
-              source={require('../asset/logout.png')}
-            />
+            <Image style={{width: 25, height: 25}} source={images.LOGOUT} />
           </TouchableOpacity>
         </View>
       ),
@@ -178,9 +210,9 @@ export default class FileUpload extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (this.state.file != prevState.file) {
       readFile = async () => {
-        const b64 = await FileSystem.readFile(this.state.file[0].uri, 'base64');
+        const b64 = await FileSystem.readFile(this.state.file.uri, 'base64');
         const workbook = XLSX.read(b64, {type: 'base64'});
-        this.setState({data: workbook.Sheets['F&O']});
+        this.setState({data: workbook.Sheets['F&O'], excle: workbook});
       };
       readFile();
     }
@@ -190,23 +222,30 @@ export default class FileUpload extends Component {
         let noOfRow = this.state.data['!ref'].split(':')[1].match(/\d+/)[0];
         for (let row = 1; row <= noOfRow; row++) {
           if (this.state.data[`${this.column[0]}${row}`]) {
-            if (this.state.data[`${this.column[0]}${row}`]['v'] === 'Symbol') {
-              obj['tradeDetails'] = row;
+            if (
+              this.state.data[`${this.column[0]}${row}`]['v'] ===
+              fieldName.SYMBOL
+            ) {
+              obj[fieldName.TRADE_DETAILS] = row;
             }
             if (
               this.state.data[`${this.column[0]}${row}`]['v'].slice(0, 3) ===
-              'P&L'
+              fieldName.P_L
             ) {
-              obj['description'] =
+              obj[fieldName.DESCRIPTION] =
                 this.state.data[`${this.column[0]}${row}`]['v'];
             }
-            if (this.state.data[`${this.column[0]}${row}`]['v'] === 'Summary') {
-              obj['Summary'] = row;
+            if (
+              this.state.data[`${this.column[0]}${row}`]['v'] ===
+              fieldName.SUMMARY
+            ) {
+              obj[fieldName.SUMMARY] = row;
             }
             if (
-              this.state.data[`${this.column[0]}${row}`]['v'] === 'Account Head'
+              this.state.data[`${this.column[0]}${row}`]['v'] ===
+              fieldName.ACCOUNT_HEAD
             ) {
-              obj['Account Head'] = row;
+              obj[fieldName.ACCOUNT_HEAD] = row;
             }
           }
         }
@@ -216,18 +255,22 @@ export default class FileUpload extends Component {
       };
       tradeObjectStart();
     }
+
+    if (this.state.startPoint != prevState.startPoint) {
+      this.setfFinalObj();
+    }
   }
 
   render() {
     return (
-      <View style={styles.container}>
+      <View>
         <NaviButton title="Upload File" onPress={() => this.getData()} />
 
         <NaviButton
           title="Final object"
           onPress={() => {
-            if (this.state.startPoint) {
-              this.finalObj();
+            if (this.state.finalObject) {
+              console.log(this.state.finalObject);
             } else {
               alert('Please upload file first');
             }
@@ -237,8 +280,21 @@ export default class FileUpload extends Component {
         <NaviButton
           title="keyword compile"
           onPress={() => {
-            if (this.state.startPoint) {
-              this.keyWordCompile();
+            if (this.state.finalObject) {
+              this.keyWordCompile(screen.KEYWORD_DETAIL);
+            } else {
+              alert('Please upload file first');
+            }
+          }}
+        />
+
+        <NaviButton
+          title="Filter"
+          onPress={() => {
+            if (this.state.data) {
+              this.props.navigation.navigate(screen.FILTER, {
+                params: this.state.finalObject,
+              });
             } else {
               alert('Please upload file first');
             }
