@@ -1,25 +1,26 @@
 import {Text, View, TouchableOpacity} from 'react-native';
 import React, {Component} from 'react';
+import {FilterContext} from './FilterContext';
 
 export default class FilterCheckBox extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       check: false,
     };
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.check != prevState.check) {
-      if (this.state.check) {
-        this.props.filterDate(this.props.data, this.props.val);
-      } else {
-        this.props.filterDate(null, this.props.val);
-      }
-    }
-  }
+  handlePress = () => {
+    const {index} = this.props;
+    const {filterData, setFilterData} = this.context;
+    let arr = filterData;
+    arr[index] = !filterData[index];
+    setFilterData(arr);
+  };
 
   render() {
+    const {filterData} = this.context;
+    const {data, index} = this.props;
     return (
       <View
         style={{
@@ -29,15 +30,19 @@ export default class FilterCheckBox extends Component {
           marginLeft: 10,
         }}>
         <TouchableOpacity
-          onPress={() => this.setState({check: !this.state.check})}
+          onPress={() => {
+            this.handlePress();
+          }}
           style={{
-            backgroundColor: this.state.check ? 'black' : null,
+            backgroundColor: filterData[index] ? 'black' : null,
             borderWidth: 2,
             height: 20,
             width: 20,
           }}></TouchableOpacity>
-        <Text style={{marginLeft: 10}}>{this.props.data}</Text>
+        <Text style={{marginLeft: 10}}>{data}</Text>
       </View>
     );
   }
 }
+
+FilterCheckBox.contextType = FilterContext;

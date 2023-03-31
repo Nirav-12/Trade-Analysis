@@ -42,6 +42,8 @@ export default class LoginScreen extends Component {
   };
 
   confirmCode = async () => {
+    this.props.navigation.navigate('Home');
+
     let otpVal = this.state.otp.join('');
     try {
       await this.state.res.confirm(otpVal).then(val => {

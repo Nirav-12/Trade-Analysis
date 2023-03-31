@@ -1,12 +1,10 @@
 import {Text, View, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
 import React, {Component} from 'react';
 import Input from '../components/Input';
-import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
+import {FilterContext} from '../components/FilterContext';
+import DetailCardParent from '../components/DetailCardParent';
 
 export default class Search extends Component {
-  user = auth().currentUser;
-
   constructor() {
     super();
     this.state = {
@@ -14,37 +12,26 @@ export default class Search extends Component {
       keyWords: [],
       symbol: '',
       search: [],
+      result: {},
     };
   }
 
   componentDidMount() {
-    firestore()
-      .collection('trades')
-      .get()
-      .then(val => {
-        let arrData = [];
-        let keyWord = [];
-        val.forEach(data => {
-          if (data._data.uid == this.user.uid) {
-            arrData = [
-              ...arrData,
-              ...JSON.parse(data._data.finalObject).tradeDetails,
-            ];
-            keyWord = [
-              ...keyWord,
-              ...JSON.parse(data._data.finalObject).keyWord,
-            ];
-          }
-        });
-        this.setState({userData: arrData, keyWords: keyWord});
-      });
+    const {tradeData} = this.context;
+    let arrData = [];
+    let keyWord = [];
+    tradeData.map((val, index) => {
+      keyWord = [...keyWord, ...val.keyWord];
+      arrData = [...arrData, ...val.tradeDetails];
+    });
+    this.setState({userData: arrData, keyWords: keyWord});
   }
 
   filterSymbol(query) {
     const index = this.state.userData.findIndex(object => {
       return object.Symbol == query?.trim();
     });
-    console.log(this.state.userData[index]);
+    this.setState({result: this.state.userData[index]});
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -59,8 +46,11 @@ export default class Search extends Component {
           }
         }
       }
+      if (valLength == 0) {
+        arr = this.state.keyWords;
+      }
+      this.setState({search: arr, result: {}});
 
-      this.setState({search: arr});
       if (arr.length == 1 && this.state.symbol == arr[0]) {
         this.setState({search: []});
       }
@@ -68,33 +58,40 @@ export default class Search extends Component {
   }
 
   render() {
+    const {result} = this.state;
     return (
       <View style={styles.container}>
         <View style={{flexDirection: 'row', justifyContent: 'center'}}>
           <View>
             <Input
               placeholder="Search"
-              onChangeText={val => this.setState({symbol: val})}
+              onChangeText={val => this.setState({symbol: val.toUpperCase()})}
               value={this.state.symbol}
+              onFocus={() => {
+                this.setState({search: this.state.keyWords});
+              }}
             />
-
-            <FlatList
-              data={this.state.search}
-              bounces={false}
-              renderItem={({item}) => (
-                <TouchableOpacity
-                  style={{
-                    backgroundColor: 'white',
-                    height: 45,
-                    padding: 10,
-
-                    justifyContent: 'center',
-                  }}
-                  onPress={() => this.setState({symbol: item})}>
-                  <Text>{item}</Text>
-                </TouchableOpacity>
+            {this.state.search.length != 0 &&
+              Object.keys(result).length == 0 && (
+                <View style={{height: 300}}>
+                  <FlatList
+                    data={this.state.search}
+                    bounces={false}
+                    renderItem={({item}) => (
+                      <TouchableOpacity
+                        style={{
+                          backgroundColor: 'white',
+                          height: 45,
+                          padding: 10,
+                          justifyContent: 'center',
+                        }}
+                        onPress={() => this.setState({symbol: item})}>
+                        <Text>{item}</Text>
+                      </TouchableOpacity>
+                    )}
+                  />
+                </View>
               )}
-            />
           </View>
 
           <TouchableOpacity
@@ -103,6 +100,11 @@ export default class Search extends Component {
             <Text style={{color: 'white'}}>Search</Text>
           </TouchableOpacity>
         </View>
+        {this.state.search.length == 0 && Object.keys(result).length != 0 && (
+          <View>
+            <DetailCardParent item={result} />
+          </View>
+        )}
       </View>
     );
   }
@@ -124,3 +126,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+
+Search.contextType = FilterContext;

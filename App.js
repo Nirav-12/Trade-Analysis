@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import LoginScreen from './src/screens/LoginScreen';
-import Home from './src/screens/Home';
+
 import FileUploadScreen from './src/screens/FileUploadScreen';
 import SignUp from './src/screens/SignUp';
 import KeywordDetail from './src/screens/KeywordDetail';
@@ -13,8 +13,10 @@ import auth from '@react-native-firebase/auth';
 import Filter from './src/screens/Filter';
 import {screen} from './src/constant/screens';
 import Search from './src/screens/Search';
+import Home from './src/screens/Home';
+import MyFilterContext from './src/components/Context';
 
-export default class App extends Component {
+class App extends Component {
   render() {
     const Stack = createNativeStackNavigator();
 
@@ -78,7 +80,11 @@ export default class App extends Component {
           <Stack.Screen
             name={screen.FILTER}
             component={Filter}
-            options={{title: ''}}
+            options={{
+              title: '',
+              headerBackVisible: false,
+              gestureEnabled: false,
+            }}
           />
 
           <Stack.Screen
@@ -90,6 +96,16 @@ export default class App extends Component {
           {/* <Stack.Screen name={screen.PRACTICE} component={Practice} /> */}
         </Stack.Navigator>
       </NavigationContainer>
+    );
+  }
+}
+
+export default class AppWrapper extends Component {
+  render() {
+    return (
+      <MyFilterContext>
+        <App {...this.props} />
+      </MyFilterContext>
     );
   }
 }

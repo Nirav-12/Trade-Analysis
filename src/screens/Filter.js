@@ -1,103 +1,90 @@
-import {
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  FlatList,
-  Image,
-  Dimensions,
-} from 'react-native';
+import {Text, View, StyleSheet, TouchableOpacity, FlatList} from 'react-native';
 import React, {Component} from 'react';
 import auth from '@react-native-firebase/auth';
-import {images} from '../constant/image';
-import firestore from '@react-native-firebase/firestore';
 import FilterCheckBox from '../components/FilterCheckBox';
+import {FilterContext} from '../components/FilterContext';
 
 export default class Filter extends Component {
-  user = auth().currentUser;
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      date: [],
-      filterDate: [],
-    };
-  }
-
   componentDidMount() {
-    this.props.navigation.setOptions({
+    const {filterData} = this.context;
+    const {navigation} = this.props;
+    navigation.setOptions({
       headerRight: () => (
+        <View>
+          {filterData.includes(true) && (
+            <TouchableOpacity
+              onPress={() => {
+                this.clearFilter();
+              }}>
+              <Text style={{fontSize: 16, color: 'white'}}>Clear Filter</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      ),
+      headerLeft: () => (
         <View>
           <TouchableOpacity
             onPress={() => {
-              this.applyFilter();
+              filterData.includes(true)
+                ? this.applyFilter()
+                : this.clearFilter();
             }}>
-            <Text style={{fontSize: 16, color: 'white'}}>Filter</Text>
+            <Text style={{fontSize: 16, color: 'white'}}>Apply</Text>
           </TouchableOpacity>
         </View>
       ),
     });
-
-    firestore()
-      .collection('trades')
-      .get()
-      .then(val => {
-        let arrData = [];
-        let filterArr = [];
-        val.forEach(data => {
-          if (data._data.uid == this.user.uid) {
-            arrData = [...arrData, [data._data.fromDate, data._data.toDate]];
-          }
-        });
-
-        this.setState({date: arrData});
-      });
   }
 
-  filterDateFun = (val, index) => {
-    let arr = this.state.filterDate;
-    arr[index] = val?.split(' ')[0];
-    console.log(arr);
-    this.setState({filterDate: arr});
-  };
+  componentDidUpdate() {
+    const {filterData} = this.context;
+    const {navigation} = this.props;
+    navigation.setOptions({
+      headerRight: () => (
+        <View>
+          {filterData.includes(true) && (
+            <TouchableOpacity
+              onPress={() => {
+                this.clearFilter();
+              }}>
+              <Text style={{fontSize: 16, color: 'white'}}>Clear Filter</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      ),
+    });
+  }
 
-  applyFilter() {
-    let filterdateVal = [];
-    this.state.filterDate.map(val => {
+  applyFilter = () => {
+    const {navigation} = this.props;
+    const {setFilterVal, filterData, tradeData} = this.context;
+    let arrfilter = [];
+    filterData.map((val, index) => {
       if (val) {
-        filterdateVal.push(val);
+        arrfilter = [...arrfilter, ...tradeData[index].tradeDetails];
       }
     });
+    setFilterVal(arrfilter);
+    navigation.goBack(null);
+  };
 
-    firestore()
-      .collection('trades')
-      .get()
-      .then(val => {
-        let arrData = [];
-        val.forEach(data => {
-          if (data._data.uid == this.user.uid) {
-            filterdateVal.map(val => {
-              if (val == data._data.fromDate) {
-                arrData = [
-                  ...arrData,
-                  ...JSON.parse(data._data.finalObject).tradeDetails,
-                ];
-              }
-            });
-          }
-        });
-        // console.log(arrData);
-        this.props.route.params.params.getData(arrData);
-      });
+  clearFilter = () => {
+    const {navigation} = this.props;
+    const {setFilterVal, filterData, setFilterData, tradeData} = this.context;
+    let arr = [];
+    let arrfilter = [];
 
-    this.props.navigation.goBack(null);
-  }
-
-  clearFilter() {
-    this.setState({filterDate: []});
-  }
+    filterData.map((val, index) => {
+      arr.push(false);
+      arrfilter = [...arrfilter, ...tradeData[index].tradeDetails];
+    });
+    setFilterData(arr);
+    setFilterVal(arrfilter);
+    navigation.goBack(null);
+  };
 
   render() {
+    const {tradeData} = this.context;
     return (
       <View style={styles.container}>
         <View style={{flexDirection: 'row', height: '100%'}}>
@@ -111,29 +98,14 @@ export default class Filter extends Component {
               }}>
               <Text>Date Range</Text>
             </TouchableOpacity>
-            <View
-              style={{
-                flex: 1,
-                marginBottom: 20,
-                justifyContent: 'flex-end',
-                alignItems: 'center',
-              }}>
-              <TouchableOpacity onPress={() => this.clearFilter()}>
-                <Text style={{fontWeight: 'bold', color: '#1fbca9'}}>
-                  Clear Filter
-                </Text>
-              </TouchableOpacity>
-            </View>
           </View>
           <View style={{flex: 3}}>
             <FlatList
-              data={this.state.date}
+              data={tradeData}
               renderItem={({item, index}) => (
                 <FilterCheckBox
-                  data={`${item[0]} - ${item[1]}`}
-                  val={index}
-                  filterDate={this.filterDateFun}
-                  clearFilter={this.state.clearFilter}
+                  data={`${item.fromDate} - ${item.toDate}`}
+                  index={index}
                 />
               )}
             />
@@ -150,3 +122,5 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
 });
+
+Filter.contextType = FilterContext;

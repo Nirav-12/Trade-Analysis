@@ -1031,7 +1031,7 @@ PODS:
   - React-jsinspector (0.71.4)
   - React-logger (0.71.4):
     - glog
-  - react-native-document-picker (8.2.0):
+  - react-native-document-picker (9.0.1):
     - React-Core
   - react-native-file-access (2.5.3):
     - React-Core
@@ -1352,7 +1352,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: f423aa99034210dd6fe12723be4bf44e4e113985
   React-jsinspector: 1f51e775819199d3fe9410e69ee8d4c4161c7b06
   React-logger: 0d58569ec51d30d1792c5e86a8e3b78d24b582c6
-  react-native-document-picker: 495c444c0c773c6e83a5d91165890ecb1c0a399a
+  react-native-document-picker: 2b8f18667caee73a96708a82b284a4f40b30a156
   react-native-file-access: e2617a7300406307be44267b36d196c78d6b2a96
   react-native-safe-area-context: 39c2d8be3328df5d437ac1700f4f3a4f75716acc
   React-perflogger: 0bb0522a12e058f6eb69d888bc16f40c16c4b907

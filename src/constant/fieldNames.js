@@ -10,4 +10,5 @@ export const fieldName = {
   DESCRIPTION: 'description',
   SUMMARY: 'Summary',
   ACCOUNT_HEAD: 'Account Head',
+  REALIZED_P_L_PCT: 'Realized P&L Pct.',
 };

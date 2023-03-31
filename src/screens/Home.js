@@ -15,14 +15,11 @@ import {screen} from '../constant/screens';
 import UploadFile from '../components/UploadFile';
 import {fieldName} from '../constant/fieldNames';
 import TradeCard from '../components/TradeCard';
+import firestore from '@react-native-firebase/firestore';
+import {FilterContext} from '../components/FilterContext';
 
 export default class Home extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      tradeData: [],
-    };
-  }
+  user = auth().currentUser;
 
   logout = () => {
     auth()
@@ -37,7 +34,10 @@ export default class Home extends Component {
   };
 
   componentDidMount() {
-    this.props.navigation.setOptions({
+    const {setTradeData, setFilterData, setFilterVal} = this.context;
+    const {navigation} = this.props;
+
+    navigation.setOptions({
       headerRight: () => (
         <View>
           <TouchableOpacity
@@ -49,21 +49,42 @@ export default class Home extends Component {
         </View>
       ),
     });
-
     BackHandler.addEventListener('hardwareBackPress', () =>
       BackHandler.exitApp(),
     );
+    firestore()
+      .collection('trades')
+      .get()
+      .then(val => {
+        let arrData = [];
+        let filterArr = [];
+        let initVal = [];
+        val.forEach(data => {
+          if (data._data.uid == this.user.uid) {
+            arrData = [...arrData, JSON.parse(data._data.finalObject)];
+            initVal = [
+              ...initVal,
+              ...JSON.parse(data._data.finalObject).tradeDetails,
+            ];
+            filterArr = [...filterArr, false];
+          }
+        });
+        setTradeData(arrData);
+        setFilterData(filterArr);
+        setFilterVal(initVal);
+      });
   }
+
   componentWillUnmount() {
     BackHandler.removeEventListener('hardwareBackPress', () =>
       BackHandler.exitApp(),
     );
   }
 
-  componentDidUpdate() {
-    console.log('home screen ', this.state.tradeData);
-  }
   render() {
+    const {filterData, filterVal} = this.context;
+    const {navigation} = this.props;
+    const count = filterData.filter(Boolean).length;
     return (
       <View style={styles.container}>
         <UploadFile />
@@ -71,30 +92,30 @@ export default class Home extends Component {
         <NaviButton
           title="Search"
           onPress={() => {
-            this.props.navigation.navigate(screen.SEARCH);
+            navigation.navigate(screen.SEARCH);
           }}
         />
         <FlatList
-          data={this.state.tradeData}
-          renderItem={({item}) => (
+          data={filterVal}
+          ListHeaderComponent={
             <TradeCard
-              Quantity={item[fieldName.QUANTITY]}
-              Symbol={item[fieldName.SYMBOL]}
-              Profit={item[fieldName.REALIZED_P_L]}
+              item={{
+                Quantity: fieldName.QUANTITY,
+                'Realized P&L': fieldName.REALIZED_P_L,
+                Symbol: fieldName.SYMBOL,
+              }}
             />
+          }
+          stickyHeaderIndices={[0]}
+          renderItem={({item}) => (
+            <TradeCard item={item} navigation={navigation} />
           )}
         />
 
         <View style={{justifyContent: 'flex-end'}}>
           <TouchableOpacity
             onPress={() => {
-              this.props.navigation.navigate(screen.FILTER, {
-                params: {
-                  getData: val => {
-                    this.setState({tradeData: val});
-                  },
-                },
-              });
+              navigation.navigate(screen.FILTER);
             }}>
             <View
               style={{
@@ -109,7 +130,9 @@ export default class Home extends Component {
                 style={{width: 25, height: 25, marginRight: 10}}
                 source={images.FILTER}
               />
-              <Text style={{fontSize: 18}}>Filter</Text>
+              <Text style={{fontSize: 18}}>
+                Filter {count != 0 && <Text>{count}</Text>}
+              </Text>
             </View>
           </TouchableOpacity>
         </View>
@@ -124,3 +147,5 @@ const styles = StyleSheet.create({
     backgroundColor: '#e9fffd',
   },
 });
+
+Home.contextType = FilterContext;
